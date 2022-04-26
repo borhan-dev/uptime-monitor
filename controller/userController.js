@@ -104,6 +104,35 @@ _user.put = (req, callback) => {
   }
 };
 
-_user.delete = (req, callback) => {};
+_user.delete =  (req, callback) => {
+    const{mobile}=req.body
+     const phone =
+       typeof mobile === 'string' && mobile.trim().length === 11
+         ? mobile
+             : false;
+    
+    if (phone) {
+        lib.read("users", phone, (err, uData) => {
+            if (!err && uData) {
+                lib.delete("users", phone, (err) => {
+                    if (!err) {
+                        callback(200, {
+                          message: 'User Deleted Successfully'
+                        });
+                    } else {
+                       callback(400, {
+                         message: 'User can"t be delete'
+                       }); 
+                   }
+               })
+            } else {
+                callback(404, {
+                  message: 'File Not Found'
+                });
+           }
+       })
+    }
+}
+
 
 module.exports = userController;
